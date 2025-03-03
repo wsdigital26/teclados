@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja Virtual - WS Teclas</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        async function carregarProdutos() {
+            try {
+                const resposta = await fetch('http://127.0.0.1:5000/api/produtos');
+                const dados = await resposta.json();
+
+                console.log(dados);  // Verifique o que está sendo retornado
+
+                // Verifica se a chave 'Teclados' está presente e é um array
+                if (!dados.Teclados || !Array.isArray(dados.Teclados)) {
+                    throw new Error("A chave 'Teclados' não foi encontrada ou não é um array.");
+                }
+
+                let produtos = dados.Teclados;  // Acessa a chave 'Teclados'
+                
+                let container = document.querySelector('.container');
+                container.innerHTML = '';  // Limpa o container antes de adicionar os produtos
+
+                produtos.forEach(produto => {
+                    let preco = produto.Preço.replace("R$ ", "").replace(/\./g, "").replace(",", ".");
+                    let mensagem = `Olá, gostaria de saber mais sobre o produto: ${produto.Nome}`;
+                    let linkWhatsApp = `https://api.whatsapp.com/send?phone=5561994088040&text=${encodeURIComponent(mensagem)}`;
+
+                    let produtoHTML = `
+                        <div class="produto">
+                            <img src="${produto['Imagem (URL)']}" alt="${produto.Nome}">
+                            <h3>${produto.Nome}</h3>
+                            <p>${preco}</p>
+                            <a href="${linkWhatsApp}" target="_blank">
+                                <button>Comprar</button>
+                            </a>
+                        </div>
+                    `;
+                    container.innerHTML += produtoHTML;  // Adiciona cada produto no container
+                });
+            } catch (error) {
+                console.error("Erro ao carregar os produtos:", error);
+            }
+        }
+
+        window.onload = carregarProdutos;  // Carrega os produtos ao carregar a página
+    </script>
+    <style>
+        .pesquisa-container {
+            text-align: center;
+            margin: 20px auto;
+        }
+        input, select {
+            width: 80%;
+            max-width: 400px;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            display: block;
+            margin: 10px auto;
+        }
+        .produto button {
+            background-color: green;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        .produto button:hover {
+            background-color: darkgreen;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">
+                <h1>Cia dos Teclados</h1>
+            </div>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Produtos</a></li>
+                <li><a href="#">Sobre</a></li>
+                <li><a href="https://wa.me/5561994088040">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="pesquisa-container">
+        <input type="text" id="pesquisa" placeholder="Pesquisar produto..." onkeyup="filtrarProdutos()">
+        <select id="ordenar" onchange="ordenarProdutos()">
+            <option value="padrao">Ordenar por</option>
+            <option value="menor">Menor preço</option>
+            <option value="maior">Maior preço</option>
+        </select>
+    </div>
+
+    <section class="produtos">
+        <div class="container">
+            <!-- Produtos serão inseridos dinamicamente aqui -->
+        </div>
+    </section>
+    <footer>
+        <p>&copy; 2025 Loja de Teclados Musicais. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        function filtrarProdutos() {
+            let termo = document.getElementById('pesquisa').value.toLowerCase();
+            let produtos = document.querySelectorAll('.produto');
+            
+            produtos.forEach(produto => {
+                let nome = produto.querySelector('h3').innerText.toLowerCase();
+                produto.style.display = nome.includes(termo) ? 'block' : 'none';
+            });
+        }
+
+        function ordenarProdutos() {
+            let opcao = document.getElementById('ordenar').value;
+            let container = document.querySelector('.container');
+            let produtos = Array.from(container.children);
+
+            produtos.sort((a, b) => {
+                let precoA = a.querySelector('p').innerText.replace('R$', '').replace('.', '').replace(',', '.').trim();
+                let precoB = b.querySelector('p').innerText.replace('R$', '').replace('.', '').replace(',', '.').trim();
+
+                precoA = precoA === "Indisponível" ? Infinity : parseFloat(precoA);
+                precoB = precoB === "Indisponível" ? Infinity : parseFloat(precoB);
+
+                return opcao === "menor" ? precoA - precoB : precoB - precoA;
+            });
+
+            container.innerHTML = "";
+            produtos.forEach(produto => container.appendChild(produto));
+        }
+    </script>
+
+</body>
+</html>

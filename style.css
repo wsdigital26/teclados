@@ -1,0 +1,129 @@
+/* Resetando estilos básicos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Definindo fontes e cores principais */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+}
+
+/* Estilos para o header e barra de navegação */
+header {
+    background-color: #2C3E50; /* Cor mais sóbria, ideal para instrumentos musicais */
+    color: white;
+    padding: 10px 0;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+nav .logo h1 {
+    font-size: 26px;
+    font-family: 'Arial', sans-serif;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #ff6600;
+}
+
+/* Estilos para a seção de produtos */
+.produtos {
+    background-color: #fff;
+    padding: 40px 0;
+}
+
+.produtos .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.produto {
+    background-color: #fff;
+    padding: 20px;
+    margin: 20px;
+    width: 230px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    border: 2px solid #ddd;
+}
+
+.produto:hover {
+    transform: translateY(-5px);
+}
+
+.produto img {
+    max-width: 100%;
+    border-radius: 8px;
+    max-height: 200px;
+    object-fit: cover;
+}
+
+.produto h3 {
+    font-size: 20px;
+    margin: 15px 0;
+    color: #2C3E50;
+}
+
+.produto p {
+    font-size: 18px;
+    color: #E67E22; /* Laranja para destacar preço */
+    margin-bottom: 20px;
+}
+
+.produto button {
+    padding: 10px 20px;
+    background-color: #E67E22;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.produto button:hover {
+    background-color: #D35400;
+}
+
+/* Estilos para o rodapé */
+footer {
+    background-color: #2C3E50;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
