@@ -6,20 +6,36 @@
     <title>Loja Virtual - WS Teclas</title>
     <link rel="stylesheet" href="style.css">
     <script>
-        async function carregarProdutos() {
+        async function carregarProdutos(categoria = '') {
             try {
                 const resposta = await fetch('http://127.0.0.1:5000/api/produtos');
                 const dados = await resposta.json();
 
                 console.log(dados);  // Verifique o que está sendo retornado
 
-                // Verifica se a chave 'Teclados' está presente e é um array
-                if (!dados.Teclados || !Array.isArray(dados.Teclados)) {
-                    throw new Error("A chave 'Teclados' não foi encontrada ou não é um array.");
+                let produtos = [];
+
+                // Verifica se a chave 'Teclados' e 'Pianos' estão presentes e são arrays
+                if (categoria === 'teclados') {
+                    if (dados.Teclados && Array.isArray(dados.Teclados)) {
+                        produtos = dados.Teclados.filter(produto => produto.Nome.toLowerCase().startsWith('teclado'));
+                    } else {
+                        throw new Error("A chave 'Teclados' não foi encontrada ou não é um array.");
+                    }
+                } else if (categoria === 'pianos') {
+                    if (dados.Pianos && Array.isArray(dados.Pianos)) {
+                        produtos = dados.Pianos;
+                    } else {
+                        throw new Error("A chave 'Pianos' não foi encontrada ou não é um array.");
+                    }
+                } else {
+                    // Carrega todos os produtos caso não haja categoria específica
+                    produtos = [
+                        ...(dados.Teclados || []),
+                        ...(dados.Pianos || [])
+                    ];
                 }
 
-                let produtos = dados.Teclados;  // Acessa a chave 'Teclados'
-                
                 let container = document.querySelector('.container');
                 container.innerHTML = '';  // Limpa o container antes de adicionar os produtos
 
@@ -32,7 +48,7 @@
                         <div class="produto">
                             <img src="${produto['Imagem (URL)']}" alt="${produto.Nome}">
                             <h3>${produto.Nome}</h3>
-                            <p>${preco}</p>
+                            <p>R$ ${preco}</p>
                             <a href="${linkWhatsApp}" target="_blank">
                                 <button>Comprar</button>
                             </a>
@@ -45,13 +61,89 @@
             }
         }
 
-        window.onload = carregarProdutos;  // Carrega os produtos ao carregar a página
+        window.onload = () => carregarProdutos();  // Carrega os produtos ao carregar a página
+
+        function filtrarPorCategoria(categoria) {
+            carregarProdutos(categoria);  // Carrega produtos com base na categoria escolhida
+        }
     </script>
     <style>
+        /* Estilos gerais */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+        }
+
+        .logo h1 {
+            margin: 0;
+            padding: 0 20px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        nav ul li {
+            position: relative;
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            display: block;
+        }
+
+        /* Menu suspenso */
+        ul ul {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #444;
+            border-radius: 5px;
+            min-width: 150px;
+            z-index: 1;
+        }
+
+        ul li:hover > ul {
+            display: block;
+        }
+
+        ul li a:hover {
+            background-color: #555;
+        }
+
+        ul ul li a {
+            padding: 10px;
+            background-color: #444;
+            color: white;
+        }
+
+        ul ul li a:hover {
+            background-color: #666;
+        }
+
+        /* Estilos de produtos */
         .pesquisa-container {
             text-align: center;
             margin: 20px auto;
         }
+
         input, select {
             width: 80%;
             max-width: 400px;
@@ -62,6 +154,7 @@
             display: block;
             margin: 10px auto;
         }
+
         .produto button {
             background-color: green;
             color: white;
@@ -72,12 +165,13 @@
             width: 100%;
             font-size: 16px;
         }
+
         .produto button:hover {
             background-color: darkgreen;
         }
     </style>
 </head>
-<body>
+<body id="inicio">
 
     <header>
         <nav>
@@ -85,8 +179,14 @@
                 <h1>Cia dos Teclados</h1>
             </div>
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Produtos</a></li>
+                <li><a href="#inicio">Home</a></li>
+                <li>
+                    <a href="#">Produtos</a>
+                    <ul>
+                        <li><a href="#" onclick="filtrarPorCategoria('teclados')">Teclados</a></li>
+                        <li><a href="#" onclick="filtrarPorCategoria('pianos')">Pianos</a></li>
+                    </ul>
+                </li>
                 <li><a href="#">Sobre</a></li>
                 <li><a href="https://wa.me/5561994088040">Contato</a></li>
             </ul>
