@@ -8,8 +8,7 @@
     <script>
         async function carregarProdutos(categoria = '') {
             try {
-                const resposta = await fetch('https://raw.githubusercontent.com/wsdigital26/teclados/main/produtos_hayamax.json
-');
+                const resposta = await fetch('https://raw.githubusercontent.com/wsdigital26/teclados/main/produtos_hayamax.json');
                 const dados = await resposta.json();
 
                 console.log(dados);  // Verifique o que está sendo retornado
